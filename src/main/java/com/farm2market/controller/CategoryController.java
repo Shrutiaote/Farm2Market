@@ -20,17 +20,18 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    // GET all categories
+   // get all category
+
     @GetMapping
     public ResponseEntity<List<Category>> getAllCategories() {
 
-        List<Category> categories =
-                categoryService.getAllCategories();
-
-        return ResponseEntity.ok(categories);
+        return ResponseEntity.ok(
+                categoryService.getAllCategories()
+        );
     }
 
-    // GET category by ID
+    // get category by id
+
     @GetMapping("/{id}")
     public ResponseEntity<Category> getCategoryById(
             @PathVariable Long id) {
@@ -39,13 +40,15 @@ public class CategoryController {
                 categoryService.getCategoryById(id);
 
         if (category == null) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity
+                    .notFound()
+                    .build();
         }
 
         return ResponseEntity.ok(category);
     }
 
-    // POST - add category
+   // add category
     @PostMapping
     public ResponseEntity<Category> addCategory(
             @RequestBody Category category) {
@@ -58,36 +61,23 @@ public class CategoryController {
                 .body(savedCategory);
     }
 
-    // PUT - update category
-    @PutMapping("/{id}")
-    public ResponseEntity<Category> updateCategory(
-            @PathVariable Long id,
-            @RequestBody Category category) {
+   // delete category
 
-        Category updatedCategory =
-                categoryService.updateCategory(id, category);
-
-        if (updatedCategory == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.ok(updatedCategory);
-    }
-
-    // DELETE - delete category
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCategory(
             @PathVariable Long id) {
 
-        Category category =
-                categoryService.getCategoryById(id);
+        boolean deleted =
+                categoryService.deleteCategory(id);
 
-        if (category == null) {
-            return ResponseEntity.notFound().build();
+        if (!deleted) {
+            return ResponseEntity
+                    .notFound()
+                    .build();
         }
 
-        categoryService.deleteCategory(id);
-
-        return ResponseEntity.noContent().build();
+        return ResponseEntity
+                .noContent()
+                .build();
     }
 }

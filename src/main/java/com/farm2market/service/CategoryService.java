@@ -16,35 +16,34 @@ public class CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
-    public Category addCategory(Category category) {
-        return categoryRepository.save(category);
-    }
-
+    // Get all categories
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
 
-    public Category getCategoryById(Long categoryId) {
-        return categoryRepository.findById(categoryId).orElse(null);
+    // Get category by ID
+    public Category getCategoryById(Long id) {
+
+        return categoryRepository
+                .findById(id)
+                .orElse(null);
     }
 
-    public Category updateCategory(Long categoryId, Category categoryDetails) {
-
-        Category category = categoryRepository
-                .findById(categoryId)
-                .orElse(null);
-
-        if (category == null) {
-            return null;
-        }
-
-        category.setCategoryName(categoryDetails.getCategoryName());
-        category.setDescription(categoryDetails.getDescription());
+    // Add category
+    public Category addCategory(Category category) {
 
         return categoryRepository.save(category);
     }
 
-    public void deleteCategory(Long categoryId) {
-        categoryRepository.deleteById(categoryId);
+    // Delete category
+    public boolean deleteCategory(Long id) {
+
+        if (!categoryRepository.existsById(id)) {
+            return false;
+        }
+
+        categoryRepository.deleteById(id);
+
+        return true;
     }
 }

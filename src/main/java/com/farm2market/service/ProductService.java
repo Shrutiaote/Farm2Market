@@ -255,4 +255,27 @@ public class ProductService {
 
      return true;
  }
+ 
+// update product image
+
+public boolean updateProductImage(
+      Long id,
+      String imageName) {
+
+  Product product =
+          productRepository
+                  .findById(id)
+                  .orElse(null);
+
+  if (product == null) {
+      return false;
+  }
+
+  product.setImage(imageName);
+
+  productRepository.save(product);
+
+  return true;
+}
+ 
 }

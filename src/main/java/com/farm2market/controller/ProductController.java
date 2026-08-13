@@ -18,6 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.farm2market.dto.ProductRequest;
 import com.farm2market.dto.ProductResponse;
 import com.farm2market.service.ProductService;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/products")
@@ -154,4 +161,73 @@ public class ProductController {
              .noContent()
              .build();
  }
+ 
+// upload product images
+
+@PostMapping("/{id}/image")
+public ResponseEntity<?> uploadProductImage(
+      @PathVariable Long id,
+      @RequestParam("image") MultipartFile image) {
+
+  if (image == null || image.isEmpty()) {
+
+      return ResponseEntity
+              .badRequest()
+              .body("Please select an image");
+  }
+
+  try {
+
+      ProductResponse product =
+              productService.getProductById(id);
+
+      if (product == null) {
+
+          return ResponseEntity
+                  .notFound()
+                  .build();
+      }
+
+      String uploadDirectory = "uploads/products/";
+
+      Path directory =
+              Paths.get(uploadDirectory);
+
+      if (!Files.exists(directory)) {
+          Files.createDirectories(directory);
+      }
+
+      String fileName =
+              System.currentTimeMillis()
+              + "_"
+              + image.getOriginalFilename();
+
+      Path filePath =
+              directory.resolve(fileName);
+
+      Files.copy(
+              image.getInputStream(),
+              filePath,
+              StandardCopyOption.REPLACE_EXISTING
+      );
+
+      // Save image path in database
+      productService.updateProductImage(
+              id,
+              fileName
+      );
+
+      return ResponseEntity.ok(
+              "Image uploaded successfully"
+      );
+
+  } catch (IOException e) {
+
+      return ResponseEntity
+              .internalServerError()
+              .body("Image upload failed");
+  }
+}
+ 
+ 
 }
