@@ -4,9 +4,19 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.farm2market.entity.Product;
+import com.farm2market.dto.ProductRequest;
+import com.farm2market.dto.ProductResponse;
 import com.farm2market.service.ProductService;
 
 @RestController
@@ -20,21 +30,25 @@ public class ProductController {
         this.productService = productService;
     }
 
-    // GET all products
-    @GetMapping
-    public ResponseEntity<List<Product>> getAllProducts() {
+   // get all products
 
-        List<Product> products = productService.getAllProducts();
+    @GetMapping
+    public ResponseEntity<List<ProductResponse>> getAllProducts() {
+
+        List<ProductResponse> products =
+                productService.getAllProducts();
 
         return ResponseEntity.ok(products);
     }
 
-    // GET product by ID
+    // get product by id
+
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(
+    public ResponseEntity<ProductResponse> getProductById(
             @PathVariable Long id) {
 
-        Product product = productService.getProductById(id);
+        ProductResponse product =
+                productService.getProductById(id);
 
         if (product == null) {
             return ResponseEntity.notFound().build();
@@ -43,49 +57,101 @@ public class ProductController {
         return ResponseEntity.ok(product);
     }
 
-    // POST - add product
-    @PostMapping
-    public ResponseEntity<Product> addProduct(
-            @RequestBody Product product) {
+    // get product by farmer
 
-        Product savedProduct =
-                productService.addProduct(product);
+    @GetMapping("/farmer/{farmerId}")
+    public ResponseEntity<List<ProductResponse>> getProductsByFarmer(
+            @PathVariable Long farmerId) {
+
+        List<ProductResponse> products =
+                productService.getProductsByFarmer(farmerId);
+
+        return ResponseEntity.ok(products);
+    }
+
+   // get product by category
+
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<List<ProductResponse>> getProductsByCategory(
+            @PathVariable Long categoryId) {
+
+        List<ProductResponse> products =
+                productService.getProductsByCategory(categoryId);
+
+        return ResponseEntity.ok(products);
+    }
+
+    // search product
+
+    @GetMapping("/search")
+    public ResponseEntity<List<ProductResponse>> searchProducts(
+            @RequestParam String keyword) {
+
+        List<ProductResponse> products =
+                productService.searchProducts(keyword);
+
+        return ResponseEntity.ok(products);
+    }
+
+    // add product
+    @PostMapping
+    public ResponseEntity<?> addProduct(
+            @RequestBody ProductRequest request) {
+
+        ProductResponse product =
+                productService.addProduct(request);
+
+        if (product == null) {
+
+            return ResponseEntity
+                    .badRequest()
+                    .body("Invalid farmer ID or category ID");
+        }
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(savedProduct);
+                .body(product);
     }
+    
+ // update product
 
-    // PUT - update product
-    @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(
-            @PathVariable Long id,
-            @RequestBody Product product) {
+ @PutMapping("/{id}")
+ public ResponseEntity<?> updateProduct(
+         @PathVariable Long id,
+         @RequestBody ProductRequest request) {
 
-        Product updatedProduct =
-                productService.updateProduct(id, product);
+     ProductResponse product =
+             productService.updateProduct(id, request);
 
-        if (updatedProduct == null) {
-            return ResponseEntity.notFound().build();
-        }
+     if (product == null) {
 
-        return ResponseEntity.ok(updatedProduct);
-    }
+         return ResponseEntity
+                 .badRequest()
+                 .body("Product, farmer, or category not found");
+     }
 
-    // DELETE - delete product
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(
-            @PathVariable Long id) {
+     return ResponseEntity.ok(product);
+ }
 
-        Product product =
-                productService.getProductById(id);
 
-        if (product == null) {
-            return ResponseEntity.notFound().build();
-        }
+// delete product 
 
-        productService.deleteProduct(id);
+ @DeleteMapping("/{id}")
+ public ResponseEntity<?> deleteProduct(
+         @PathVariable Long id) {
 
-        return ResponseEntity.noContent().build();
-    }
+     boolean deleted =
+             productService.deleteProduct(id);
+
+     if (!deleted) {
+
+         return ResponseEntity
+                 .notFound()
+                 .build();
+     }
+
+     return ResponseEntity
+             .noContent()
+             .build();
+ }
 }
