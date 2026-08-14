@@ -7,14 +7,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.farm2market.dto.LoginRequest;
+import com.farm2market.dto.RegisterRequest;
 import com.farm2market.entity.Role;
 import com.farm2market.entity.User;
 import com.farm2market.service.RoleService;
 import com.farm2market.service.UserService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:5173")
 public class AuthController {
 
     private final UserService userService;
@@ -28,15 +31,16 @@ public class AuthController {
         this.roleService = roleService;
     }
 
-    // REGISTER
+    // register
+
     @PostMapping("/register")
     public ResponseEntity<?> register(
-            @RequestBody User user) {
+    		@Valid @RequestBody RegisterRequest request) {
 
-        if (userService.emailExists(user.getEmail())) {
+        // Check whether email already exists
+        if (userService.emailExists(request.getEmail())) {
 
-            Map<String, String> response =
-                    new HashMap<>();
+            Map<String, String> response = new HashMap<>();
 
             response.put(
                     "message",
@@ -48,11 +52,11 @@ public class AuthController {
                     .body(response);
         }
 
-        if (user.getRole() == null ||
-            user.getRole().getRoleName() == null) {
+        // Check role
+        if (request.getRole() == null ||
+            request.getRole().trim().isEmpty()) {
 
-            Map<String, String> response =
-                    new HashMap<>();
+            Map<String, String> response = new HashMap<>();
 
             response.put(
                     "message",
@@ -65,17 +69,14 @@ public class AuthController {
         }
 
         String roleName =
-                user.getRole()
-                    .getRoleName()
-                    .toUpperCase();
+                request.getRole().trim().toUpperCase();
 
         Role role =
                 roleService.getRoleByName(roleName);
 
         if (role == null) {
 
-            Map<String, String> response =
-                    new HashMap<>();
+            Map<String, String> response = new HashMap<>();
 
             response.put(
                     "message",
@@ -87,12 +88,22 @@ public class AuthController {
                     .body(response);
         }
 
+        // Create User entity
+        User user = new User();
+
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setEmail(request.getEmail());
+        user.setPassword(request.getPassword());
+        user.setPhone(request.getPhone());
+        user.setAddress(request.getAddress());
         user.setRole(role);
 
+        // Save user
         User savedUser =
                 userService.registerUser(user);
 
-        // Don't return password
+        // Don't send password back
         savedUser.setPassword(null);
 
         return ResponseEntity
@@ -100,21 +111,17 @@ public class AuthController {
                 .body(savedUser);
     }
 
-    // LOGIN
+
+    // login
+
     @PostMapping("/login")
     public ResponseEntity<?> login(
-            @RequestBody Map<String, String> loginData) {
-
-        String email =
-                loginData.get("email");
-
-        String password =
-                loginData.get("password");
+    		@Valid @RequestBody LoginRequest request) {
 
         User user =
                 userService.loginUser(
-                        email,
-                        password
+                        request.getEmail(),
+                        request.getPassword()
                 );
 
         if (user == null) {
