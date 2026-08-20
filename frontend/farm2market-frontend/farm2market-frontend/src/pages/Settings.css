@@ -1,0 +1,218 @@
+.settings-page {
+    min-height: 100vh;
+    background: #f5f9f6;
+    padding: 30px;
+}
+
+
+/* Header */
+
+.settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.settings-header h1 {
+    margin: 0;
+    color: #173b2a;
+    font-size: 30px;
+}
+
+.settings-header p {
+    margin-top: 7px;
+    color: #777;
+    font-size: 14px;
+}
+
+
+/* Back Button */
+
+.back-dashboard-button {
+    background: #16833d;
+    color: white;
+    text-decoration: none;
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.back-dashboard-button:hover {
+    background: #0e6730;
+}
+
+
+/* Container */
+
+.settings-container {
+    max-width: 900px;
+    display: grid;
+    gap: 25px;
+}
+
+
+/* Card */
+
+.settings-card {
+    background: white;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+}
+
+
+/* Card Header */
+
+.settings-card-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.settings-icon {
+    width: 55px;
+    height: 55px;
+    background: #e5f4df;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
+}
+
+.settings-card-header h2 {
+    margin: 0;
+    color: #173b2a;
+    font-size: 20px;
+}
+
+.settings-card-header p {
+    margin: 5px 0 0;
+    color: #777;
+    font-size: 13px;
+}
+
+
+/* Form */
+
+.settings-form {
+    display: grid;
+    gap: 18px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.form-group label {
+    color: #173b2a;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.form-group input,
+.form-group textarea {
+    border: 1px solid #d9e2dc;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 14px;
+    outline: none;
+    font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: #16833d;
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+
+/* Save Button */
+
+.save-settings-button {
+    width: fit-content;
+    border: none;
+    background: #16833d;
+    color: white;
+    padding: 12px 22px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.save-settings-button:hover {
+    background: #0e6730;
+}
+
+
+/* Message */
+
+.settings-message {
+    margin: 0;
+    color: #16833d;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+/* Account Information */
+
+.account-info {
+    display: grid;
+    gap: 0;
+}
+
+.account-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 0;
+    border-bottom: 1px solid #edf1ee;
+}
+
+.account-row:last-child {
+    border-bottom: none;
+}
+
+.account-row span {
+    color: #777;
+    font-size: 14px;
+}
+
+.account-row strong {
+    color: #173b2a;
+    font-size: 14px;
+}
+
+.active-account {
+    color: #16833d !important;
+}
+
+
+/* Responsive */
+
+@media (max-width: 700px) {
+
+    .settings-page {
+        padding: 20px;
+    }
+
+    .settings-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .settings-card {
+        padding: 20px;
+    }
+
+}
